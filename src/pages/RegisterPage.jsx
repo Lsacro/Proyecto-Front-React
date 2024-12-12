@@ -29,14 +29,14 @@ function RegisterPage() {
   const storage = getStorage(); // Instancia de Firebase Storage
 
   const initialValues = {
-    name: "",
-    lastname: "",
-    date: "",
+    firstName: "",
+    lastName: "",
+    birthDate: "",
     email: "",
     password: "",
     confirmPassword: "",
-    userRole: "user",
-    favorites: [],
+    isAdmin: "user",
+    favouriteFlats: [],
   };
 
   const handleSubmit = async (values, { setSubmitting }) => {
@@ -61,19 +61,19 @@ function RegisterPage() {
 
       // Actualizar el perfil del usuario en Firebase Authentication (sin almacenar la imagen aquí)
       await updateProfile(user, {
-        displayName: `${values.name} ${values.lastname}`, // Solo almacenamos el nombre completo
+        displayName: `${values.firstName} ${values.lastName}`, // Solo almacenamos el nombre completo
       });
 
       // Guardar el usuario en Firestore
       await createUser({
-        name: values.name,
-        lastname: values.lastname,
+        firstName: values.firstName,
+        lastName: values.lastName,
         email: values.email,
-        userRole: values.userRole,
-        favorites: values.favorites,
+        isAdmin: values.isAdmin,
+        favouriteFlats: values.favouriteFlats,
         uid: user.uid,
         profileImage: finalImageUrl,
-        date: values.date,
+        birthDate: values.birthDate,
       });
 
       // Redirigir al usuario a la página principal después de registrarse

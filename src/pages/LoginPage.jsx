@@ -53,12 +53,12 @@ function LoginPage() {
         // Si el usuario no existe en Firestore, crearlo
         if (userByEmail.length === 0) {
           const newUser = {
-            name: user.displayName,
-            lastname: "",
-            date: "",
+            firstName: user.displayName,
+            lastName: "",
+            birthDate: "",
             email: user.email,
-            userRole: "user",
-            favorites: [],
+            isAdmin: "user",
+            favofavouriteFlatsrites: [],
             uid: user.uid,
             profileImage: user.photoURL,
           };
