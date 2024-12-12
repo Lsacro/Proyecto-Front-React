@@ -7,13 +7,13 @@ import { HeaderForm } from "../Commons/HeaderForm";
 import { FooterForm } from "../Commons/FooterForm";
 
 const validationSchema = Yup.object({
-  name: Yup.string()
+  firstName: Yup.string()
     .required("Name is required")
     .min(2, "Name must be at least 2 characters long"),
-  lastname: Yup.string()
+    lastName: Yup.string()
     .required("Last name is required")
     .min(2, "Last name must be at least 2 characters long"),
-  date: Yup.date()
+    birthDate: Yup.date()
     .required("Date is required")
     .test("age", "You must be between 18 and 120 years old", function (value) {
       const currentDate = new Date();
@@ -91,13 +91,13 @@ function UserForm({ initialValues, onSubmit, imageUrl, handleImageChange }) {
 
               <div className="flex gap-2">
                 <FormField
-                  name="name"
+                  name="firstName"
                   type="text"
                   placeholder="Your Name"
-                  label="Name"
+                  label="FirstName"
                 />
                 <FormField
-                  name="lastname"
+                  name="lastName"
                   type="text"
                   placeholder="Your Last name"
                   label="Last name"
