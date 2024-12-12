@@ -25,7 +25,7 @@ function ProfilePage() {
   const navigate = useNavigate();
   const [isEditMode, setIsEditMode] = useState(false);
   const [imageUrl, setImageUrl] = useState(
-    currentUser?.photoURL ||
+    currentUser?.profileImage ||
       "https://avatars.githubusercontent.com/u/169313485?v=4"
   );
   const [initialValues, setInitialValues] = useState({

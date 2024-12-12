@@ -74,54 +74,6 @@ function LoginPage() {
     }
   };
 
-  // const handleLoginWithGoogle = async () => {
-  //   const googleProvider = new GoogleAuthProvider();
-  //   try {
-  //     const result = await signInWithPopup(auth, googleProvider);
-  //     const user = result.user;
-  //     console.log('USER: ', user)
-
-  //     // Comprobar si el usuario ya está en el cache (localStorage)
-  //     const cachedUser = localStorage.getItem(`user_${user.uid}`);
-  //     if (!cachedUser) {
-  //       // Si no está en cache, verificar en Firestore si el usuario ya existe
-  //       const userByEmail = await getUserByEmail(user.email);
-
-  //       // Si el usuario no existe en Firestore, crearlo
-  //       if (userByEmail.length === 0) {
-  //         const newUser = {
-  //           firstName: user.displayName,
-  //           lastName: "",
-  //           birthDate: "",
-  //           email: user.email,
-  //           isAdmin: "user",
-  //           favofavouriteFlatsrites: [],
-  //           uid: user.uid,
-  //           profileImage: user.photoURL,
-  //         };
-
-  //         // Crear el usuario en Firestore
-  //         await createUser(newUser);
-
-  //         // Guardar los datos del usuario en localStorage para futuras consultas
-  //         localStorage.setItem(`user_${user.uid}`, JSON.stringify(newUser));
-  //       } else {
-  //         // Si el usuario ya existe en Firestore, cachearlo
-  //         localStorage.setItem(
-  //           `user_${user.uid}`,
-  //           JSON.stringify(userByEmail[0])
-  //         );
-  //       }
-  //     }
-
-  //     // Redirigir a la página principal después del login exitoso
-  //     navigate("/my-flats");
-  //   } catch (error) {
-  //     console.error("Error logging in with Google:", error);
-  //     setErrorMessage("Error logging in with Google: " + error.message);
-  //   }
-  // };
-
   // Manejo del restablecimiento de contraseña
   const handleResetPassword = async (email) => {
     setErrorMessage(""); // Limpiar mensaje de error
