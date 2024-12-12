@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { NavbarLinks } from "./NavbarLinks";
-import { getAuth, signOut } from "firebase/auth";
+// import { getAuth, signOut } from "firebase/auth";
 import { useAuth } from "../../context/authContext";
 import { BuildingOffice2Icon } from "@heroicons/react/24/solid";
 import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/24/solid";
@@ -10,17 +10,16 @@ import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/24/solid";
 function Navbar({ onClick }) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const { currentUser, userDetails } = useAuth();
+  const { currentUser, logout } = useAuth();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
   const handleLogout = async () => {
-    const auth = getAuth();
     try {
       // Cierra la sesión del usuario
-      await signOut(auth);
+      await logout();
 
       // Elimina todos los elementos guardados en el localStorage
       localStorage.clear();
@@ -31,6 +30,14 @@ function Navbar({ onClick }) {
       console.log("Error en la sesión", error);
     }
   };
+
+  const defaultProfileSVG = `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+    <circle cx="12" cy="12" r="10" fill="#E5E7EB" />
+    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.33 0-6 2.67-6 6h12c0-3.33-2.67-6-6-6z" fill="#9CA3AF" />
+  </svg>
+`;
+
 
   return (
     <nav className="bg-white dark:bg-gray-900 w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
@@ -48,7 +55,7 @@ function Navbar({ onClick }) {
           {currentUser && <span> {currentUser.displayName}</span>}
           <img
             className="w-10 h-10 object-cover rounded-full"
-            src={currentUser.photoURL || userDetails.profileImage}
+            src={currentUser.profileImage || `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(defaultProfileSVG)}`}
             alt="profile-photo"
           />
 

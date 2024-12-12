@@ -1,22 +1,14 @@
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useState,
 } from "react";
-import {
-  addDoc,
-  collection,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
-import { db, auth } from "../config/firebase";
-import { getUserByUid } from "../services/firebase";
+import Cookies from "js-cookie";
 
 //Importaciones Backend
 import axios from "axios";
+import axiosBase from "../assets/utils";
 
 const AuthContext = createContext();
 
@@ -24,26 +16,74 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [token, setToken] = useState(Cookies.get("authToken") || null);
+
+  // Cargar sesión inicial
+  useEffect(() => {
+    const loadSession = async () => {
+      const storedToken = Cookies.get("authToken");
+      if (storedToken) {
+        try {
+          // Llamar a tu API para obtener los datos del usuario
+          const response = await axiosBase.get("/user/me");
+          setCurrentUser(response.data); // Suponiendo que tu API devuelve los datos del usuario
+          setToken(storedToken);
+        } catch (error) {
+          console.error("Error loading session:", error);
+          logout(); // Si falla, eliminar la sesión
+        }
+      }
+    };
+
+    loadSession();
+  }, []);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      setCurrentUser(user);
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
+    }
+  }, [token]);
 
-      if (user) {
-        try {
-          const details = await getUserByUid(user.uid);
-          setUserDetails(details.length > 0 ? details[0] : null);
-        } catch (error) {
-          console.error("Error fetching user details:", error);
-          setUserDetails(null);
-        }
-      } else {
-        setUserDetails(null);
-      }
-    });
+  // Función para manejar la autenticación
+  const handleAuth = (userData, authToken) => {
+    setCurrentUser(userData);
+    setToken(authToken);
 
-    return unsubscribe;
-  }, []);
+    // Guardar el token en cookies
+    Cookies.set("authToken", authToken, { expires: 7 }); // Token válido por 7 días
+  };
+
+  // Función para cerrar sesión
+  const logout = () => {
+    setCurrentUser(null);
+    setToken(null);
+    setUserDetails(null);
+
+    // Eliminar token de cookies
+    Cookies.remove("authToken");
+  };
+
+  // useEffect(() => {
+  //   const unsubscribe = auth.onAuthStateChanged(async (user) => {
+  //     setCurrentUser(user);
+
+  //     if (user) {
+  //       try {
+  //         const details = await getUserByUid(user.uid);
+  //         setUserDetails(details.length > 0 ? details[0] : null);
+  //       } catch (error) {
+  //         console.error("Error fetching user details:", error);
+  //         setUserDetails(null);
+  //       }
+  //     } else {
+  //       setUserDetails(null);
+  //     }
+  //   });
+
+  //   return unsubscribe;
+  // }, []);
 
   /*   const loadMessages = useCallback((flatId) => {
     const messagesCollection = collection(db, "messages");
@@ -103,7 +143,16 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ currentUser, userDetails, messages, addMessages, loadMessages }}
+      value={{
+        currentUser,
+        userDetails,
+        messages,
+        addMessages,
+        loadMessages,
+        token,
+        handleAuth,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

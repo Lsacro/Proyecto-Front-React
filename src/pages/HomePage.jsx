@@ -13,7 +13,7 @@ import { SkeletonCard } from "../components/Commons/SkeletonCard.jsx";
 import { FilterHome } from "../components/Commons/FilterHome.jsx";
 
 function HomePage() {
-  const { userDetails } = useAuth();
+  const { currentUser } = useAuth();
   const [flats, setFlats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,19 +28,19 @@ function HomePage() {
 
   useEffect(() => {
     // Monitorea los cambios en userDetails
-    if (userDetails && userDetails.id) {
-      setUserId(userDetails.id);
+    if (currentUser) {
+      setUserId(currentUser.id);
       setLoadingUserDetails(false); // Detenemos la carga del usuario si se tiene el ID
       // Extrae solo los campos necesarios
-      const { userRole, uid, id, email } = userDetails;
+      const { isAdmin, id, email } = currentUser;
 
       // Guardar solo esos campos en localStorage
-      const userDataToStore = { userRole, uid, id, email };
+      const userDataToStore = { isAdmin, id, email };
       localStorage.setItem("userDetails", JSON.stringify(userDataToStore));
-    } else if (userDetails === null) {
+    } else if (currentUser === null) {
       console.log("Esperando a que userDetails esté disponible...");
     }
-  }, [userDetails]);
+  }, [currentUser]);
 
   useEffect(() => {
     const fetchFlats = async () => {
@@ -57,7 +57,8 @@ function HomePage() {
         if (flatsList.length > 0) {
           const updatedFlatsList = flatsList.map((flat) => ({
             ...flat,
-            isFavorite: userDetails?.favorites.includes(flat.id),
+            // isFavorite: currentUser?.favouriteFlats.includes(flat.id),
+            isFavorite: false
           }));
           setFlats(updatedFlatsList);
         } else {
@@ -72,10 +73,10 @@ function HomePage() {
       }
     };
 
-    if (!loadingUserDetails && userDetails) {
+    if (!loadingUserDetails && currentUser) {
       fetchFlats();
     }
-  }, [loadingUserDetails, userDetails, filterOptions]);
+  }, [loadingUserDetails, currentUser, filterOptions]);
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -103,20 +104,20 @@ function HomePage() {
     }
 
     try {
-      const isFavorite = userDetails.favorites.includes(flatId);
+      const isFavorite = currentUser.favouriteFlats.includes(flatId);
 
       if (isFavorite) {
         await removeFlatFromFavorites(userId, flatId);
         console.log(`Flat ${flatId} eliminado de favoritos.`);
         // Actualiza la lista de favoritos del usuario
-        userDetails.favorites = userDetails.favorites.filter(
+        currentUser.favouriteFlats = currentUser.favouriteFlats.filter(
           (id) => id !== flatId
         );
       } else {
         await addFlatToFavorites(userId, flatId);
         console.log(`Flat ${flatId} agregado a favoritos.`);
         // Actualiza la lista de favoritos del usuario
-        userDetails.favorites.push(flatId);
+        currentUser.favouriteFlats.push(flatId);
       }
 
       // Actualiza el estado del flat para reflejar el cambio
