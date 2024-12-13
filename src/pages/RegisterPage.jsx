@@ -35,7 +35,7 @@ function RegisterPage() {
     email: "",
     password: "",
     confirmPassword: "",
-    isAdmin: "user",
+    isAdmin: false,
     favouriteFlats: [],
   };
 
