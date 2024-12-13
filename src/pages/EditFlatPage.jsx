@@ -4,6 +4,7 @@ import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { useAuth } from "../context/authContext";
 import { getFlatById, updateFlat } from "../services/firebase";
 import { FlatForm } from "../components/Flats/FlatForm";
+import axiosBase from "../assets/utils";
 
 function EditFlatPage() {
   const { id } = useParams();
@@ -13,17 +14,14 @@ function EditFlatPage() {
   const [imageUrl, setImageUrl] = useState("");
   const [imageFile, setImageFile] = useState(null);
 
-  const { currentUser } = useAuth();
-  const userId = currentUser ? currentUser.uid : null;
-
   useEffect(() => {
     const fetchFlatData = async () => {
       try {
-        const flatData = await getFlatById(id);
+        const { data: flatData } = await axiosBase.get(`/flats/${id}`);
         if (flatData) {
-          const availableDate = new Date(flatData.availableDate);
-          const formattedDate = !isNaN(availableDate.getTime())
-            ? availableDate.toISOString().split("T")[0]
+          const dateAvailable = new Date(flatData.dateAvailable);
+          const formattedDate = !isNaN(dateAvailable.getTime())
+            ? dateAvailable.toISOString().split("T")[0]
             : "";
 
           setInitialValues({
@@ -32,9 +30,9 @@ function EditFlatPage() {
             streetNumber: flatData.streetNumber,
             areaSize: flatData.areaSize,
             yearBuilt: flatData.yearBuilt,
-            hasAC: flatData.hasAC,
+            hasAC: flatData.hasAC === "Si" ? true : false,
             rentPrice: flatData.rentPrice,
-            availableDate: formattedDate,
+            dateAvailable: formattedDate,
           });
           setImageUrl(flatData.imageUrl);
         } else {
@@ -59,6 +57,7 @@ function EditFlatPage() {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
+      console.log("EDITANDO");
       const storage = getStorage();
 
       let finalImageUrl = imageUrl;
@@ -71,17 +70,14 @@ function EditFlatPage() {
         finalImageUrl = await getDownloadURL(storageRef);
       }
 
-      if (!userId) {
-        throw new Error("User not authenticated");
-      }
-
       const updatedFlatData = {
         ...values,
+        hasAC: values.hasAC ? "Si" : "No",
         imageUrl: finalImageUrl,
         updatedAt: new Date(),
       };
 
-      await updateFlat(id, updatedFlatData);
+      await axiosBase.put(`/flats/${id}`, updatedFlatData);
       console.log("Flat updated successfully");
 
       setShowSuccessMessage(true);

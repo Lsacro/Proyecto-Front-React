@@ -10,10 +10,10 @@ const validationSchema = Yup.object({
   firstName: Yup.string()
     .required("Name is required")
     .min(2, "Name must be at least 2 characters long"),
-    lastName: Yup.string()
+  lastName: Yup.string()
     .required("Last name is required")
     .min(2, "Last name must be at least 2 characters long"),
-    birthDate: Yup.date()
+  birthDate: Yup.date()
     .required("Date is required")
     .test("age", "You must be between 18 and 120 years old", function (value) {
       const currentDate = new Date();
@@ -36,10 +36,17 @@ const validationSchema = Yup.object({
     .oneOf([Yup.ref("password"), null], "Passwords must match"),
 });
 
-function UserForm({ initialValues, onSubmit, imageUrl, handleImageChange }) {
+function UserForm({
+  initialValues,
+  onSubmit,
+  imageUrl,
+  handleImageChange,
+  errorMessage,
+}) {
   return (
     <div className="flex min-h-screen justify-center bg-gray-100 font-sans">
       <div className="container rounded my-auto max-w-md border-2 border-gray-200 bg-white p-3">
+        {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
         <HeaderForm
           title="Create account"
           paragraph="Login to access your account"
@@ -105,7 +112,7 @@ function UserForm({ initialValues, onSubmit, imageUrl, handleImageChange }) {
               </div>
 
               <div className="flex gap-2">
-                <FormField name="date" type="date" label="Date" />
+                <FormField name="birthDate" type="date" label="Date" />
                 <FormField
                   name="email"
                   type="email"

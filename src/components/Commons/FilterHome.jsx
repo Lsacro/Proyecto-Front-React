@@ -47,14 +47,10 @@ function FilterHome({ onFilterChange, initialValues }) {
                 id="sortOption"
                 label="Sort by"
                 error={touched.sortOption && errors.sortOption}
+                placeholder="Select an option"
               >
-                <option value="">Select option</option>
-                <option value="city_asc">City a-z</option>
-                <option value="city_desc">City z-a</option>
                 <option value="price_asc">Price min-max</option>
                 <option value="price_desc">Price max-min</option>
-                <option value="area_asc">Area min-max</option>
-                <option value="area_desc">Area max-min</option>
               </FormField>
 
               {/* Campo de búsqueda */}

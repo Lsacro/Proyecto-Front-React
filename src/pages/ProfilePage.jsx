@@ -6,57 +6,44 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { FormField } from "../components/Commons/FormField";
 import { useAuth } from "../context/authContext";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "../config/firebase";
-import { getUserByUid } from "../services/firebase";
-import { useNavigate } from "react-router-dom";
-import { TrashIcon } from "@heroicons/react/24/solid";
+import axiosBase from "../assets/utils";
 
 const validationSchema = Yup.object({
-  name: Yup.string().required("Name is required"),
-  lastname: Yup.string().required("Last name is required"),
-  date: Yup.date().required("Date is required"),
+  firstName: Yup.string().required("Name is required"),
+  lastName: Yup.string().required("Last name is required"),
+  birthDate: Yup.date().required("Date is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
   userRole: Yup.string().required("Role is required"),
 });
 
 function ProfilePage() {
   const { currentUser } = useAuth();
-  const navigate = useNavigate();
   const [isEditMode, setIsEditMode] = useState(false);
   const [imageUrl, setImageUrl] = useState(
     currentUser?.profileImage ||
       "https://avatars.githubusercontent.com/u/169313485?v=4"
   );
   const [initialValues, setInitialValues] = useState({
-    name: "",
-    lastname: "",
-    date: "",
+    firstName: "",
+    lastName: "",
+    birthDate: new Date(),
     email: "",
-    userRole: "user",
   });
 
   useEffect(() => {
     if (currentUser) {
-      console.log("");
-      const fetchProfileData = async () => {
-        const userByUid = await getUserByUid(currentUser.uid);
-        if (userByUid.length > 0) {
-          const userData = userByUid[0];
+      console.log("user: ", currentUser);
+      const date = new Date(currentUser.birthDate);
 
-          setInitialValues({
-            name: userData.name || "",
-            lastname: userData.lastname || "",
-            date: userData.date || "",
-            email: userData.email || currentUser.email || "",
-            userRole: userData.userRole || "user",
-          });
-
-          setImageUrl(userData.profileImage || imageUrl);
-        }
-      };
-
-      fetchProfileData();
+      // Formatear la fecha al formato yyyy-mm-dd
+      const formattedDate = date.toISOString().split("T")[0];
+      setInitialValues({
+        firstName: currentUser.firstName || "",
+        lastName: currentUser.lastName || "",
+        birthDate: formattedDate || "",
+        email: currentUser.email || "",
+        userRole: currentUser.isAdmin ? "Admin" : "User",
+      });
     }
   }, [currentUser, imageUrl]);
 
@@ -69,13 +56,8 @@ function ProfilePage() {
             initialValues={initialValues}
             validationSchema={validationSchema}
             enableReinitialize={true}
-            onSubmit={(values, { setSubmitting }) => {
-              const profileRef = doc(db, "users", currentUser.uid);
-              setDoc(
-                profileRef,
-                { ...values, profileImage: imageUrl },
-                { merge: true }
-              );
+            onSubmit={async (values, { setSubmitting }) => {
+              await axiosBase.put(`/user/${currentUser.id}`, values);
               setSubmitting(false);
               setIsEditMode(false);
             }}
@@ -129,14 +111,14 @@ function ProfilePage() {
 
                 <div className="flex gap-2">
                   <FormField
-                    name="name"
+                    name="firstName"
                     type="text"
                     placeholder="Your Name"
                     label="Name"
                     disabled={!isEditMode}
                   />
                   <FormField
-                    name="lastname"
+                    name="lastName"
                     type="text"
                     placeholder="Your Last name"
                     label="Last name"
@@ -146,7 +128,7 @@ function ProfilePage() {
 
                 <div className="flex gap-2">
                   <FormField
-                    name="date"
+                    name="birthDate"
                     type="date"
                     label="Date"
                     disabled={!isEditMode}
@@ -156,7 +138,7 @@ function ProfilePage() {
                     type="email"
                     placeholder="Your email address"
                     label="Email Address"
-                    disabled={!isEditMode}
+                    disabled
                   />
                 </div>
 
@@ -164,16 +146,13 @@ function ProfilePage() {
                   <option value="user">User</option>
                 </FormField>
 
+                {isEditMode && (
+                  <ButtonPrimaryForm text="Save Changes" type="submit" />
+                )}
                 <ButtonPrimaryForm
-                  text={isEditMode ? "Save Changes" : "Edit Profile"}
-                  type={isEditMode ? "submit" : "button"}
-                  onClick={() => {
-                    if (!isEditMode) {
-                      navigate("/update-profile");
-                    } else {
-                      setIsEditMode(false);
-                    }
-                  }}
+                  text="Edit Profile"
+                  type="button"
+                  onClick={() => setIsEditMode(!isEditMode)}
                 />
               </Form>
             )}

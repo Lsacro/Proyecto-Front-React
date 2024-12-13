@@ -4,6 +4,7 @@ import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { useAuth } from "../context/authContext";
 import { createFlat } from "../services/firebase";
 import { FlatForm } from "../components/Flats/FlatForm";
+import axiosBase from "../assets/utils";
 
 function NewFlatPage() {
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ function NewFlatPage() {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
+      console.log("values: ", values);
       const storage = getStorage();
 
       let finalImageUrl = imageUrl;
@@ -56,21 +58,14 @@ function NewFlatPage() {
         finalImageUrl = await getDownloadURL(storageRef);
       }
 
-      if (!userId) {
-        throw new Error("User not authenticated");
-      }
-
       const flatData = {
         ...values,
+        hasAC: values.hasAC ? "Si" : "No",
         imageUrl: finalImageUrl,
         createdAt: new Date(),
-        userId,
-        ownerName: userName,
-        ownerEmail: userEmail,
       };
 
-      const flatId = await createFlat(flatData);
-      console.log("Flat created successfully with ID:", flatId);
+      await axiosBase.post("/flats", flatData);
 
       setShowSuccessMessage(true);
 

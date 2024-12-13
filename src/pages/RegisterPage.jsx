@@ -1,16 +1,15 @@
 import { useState } from "react";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
 import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage"; // Importa las funciones de Firebase Storage
 import { useNavigate } from "react-router-dom";
-import { createUser } from "../services/firebase"; // Función que guarda el usuario en Firestore
 import { UserForm } from "../components/Users/UserForm";
+import axiosBase from "../assets/utils";
+import { useAuth } from "../context/authContext";
+import { getAuth } from "firebase/auth";
 
 function RegisterPage() {
   const navigate = useNavigate();
+  const { handleAuth } = useAuth();
+  const [errorMessage, setErrorMessage] = useState("");
   const [imageUrl, setImageUrl] = useState("/images/profile.jpg");
   const [imageFile, setImageFile] = useState(null); // Almacena el archivo de imagen
 
@@ -41,15 +40,8 @@ function RegisterPage() {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      // Crear el usuario con email y contraseña
-      const { user } = await createUserWithEmailAndPassword(
-        auth,
-        values.email,
-        values.password
-      );
-
       // Subir la imagen a Firebase Storage, si hay imagen
-      let finalImageUrl = imageUrl;
+      let finalImageUrl;
       if (imageFile) {
         const storageRef = ref(
           storage,
@@ -57,42 +49,48 @@ function RegisterPage() {
         );
         await uploadBytes(storageRef, imageFile);
         finalImageUrl = await getDownloadURL(storageRef); // Obtener la URL de la imagen subida
+        console.log("URL DE LA IMAGEN: ", finalImageUrl);
       }
 
-      // Actualizar el perfil del usuario en Firebase Authentication (sin almacenar la imagen aquí)
-      await updateProfile(user, {
-        displayName: `${values.firstName} ${values.lastName}`, // Solo almacenamos el nombre completo
-      });
-
-      // Guardar el usuario en Firestore
-      await createUser({
+      const body = {
         firstName: values.firstName,
         lastName: values.lastName,
         email: values.email,
-        isAdmin: values.isAdmin,
-        favouriteFlats: values.favouriteFlats,
-        uid: user.uid,
-        profileImage: finalImageUrl,
+        password: values.password,
         birthDate: values.birthDate,
-      });
+      };
+
+      if (finalImageUrl) {
+        body.profileImage = finalImageUrl;
+      }
+      const response = await axiosBase.post("/api/auth/register", body);
+
+      const { user, token } = response.data;
+
+      // Guardar usuario y token en el contexto
+      handleAuth(user, token);
 
       // Redirigir al usuario a la página principal después de registrarse
       navigate("/home");
       console.log("User registered successfully");
     } catch (error) {
       console.error("Error registering user:", error);
+      setErrorMessage(error.response.data.message);
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <UserForm
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      imageUrl={imageUrl}
-      handleImageChange={handleImageChange}
-    />
+    <>
+      <UserForm
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        imageUrl={imageUrl}
+        handleImageChange={handleImageChange}
+        errorMessage={errorMessage}
+      />
+    </>
   );
 }
 

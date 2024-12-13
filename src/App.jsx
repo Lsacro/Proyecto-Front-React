@@ -12,6 +12,7 @@ import { FavouritesPage } from "./pages/FavouritesPage";
 import { MyFlatsPage } from "./pages/MyFlatsPage";
 import { AllUsersPage } from "./pages/AllUsersPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { ResetPasswordForm } from "./pages/ResetPasswordForm";
 import { PrivateRoute } from "./components/Commons/PrivateRoute";
 import { PublicRoute } from "./components/Commons/PublicRoute";
 import { AdminRoute } from "./components/Commons/AdminRoute";
@@ -40,6 +41,7 @@ const AppRoutes = () => {
       <Route element={<PublicRoute />}>
         <Route path="/" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/reset-password/:token" element={<ResetPasswordForm />} />
       </Route>
     </Routes>
   );

@@ -6,7 +6,7 @@ import { TrashIcon } from "@heroicons/react/24/solid";
 import { HomeIcon } from "@heroicons/react/24/solid";
 
 function FlatItem({
-  id,
+  _id,
   imageUrl,
   city,
   streetName,
@@ -16,6 +16,7 @@ function FlatItem({
   hasAC,
   rentPrice,
   availableDate,
+  ownerId,
   ownerName,
   ownerEmail,
   isFavorite,
@@ -29,14 +30,20 @@ function FlatItem({
   return (
     <article className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <picture>
-        {imageUrl && (
+        {imageUrl ? (
           <img
             className="w-full rounded-t-lg"
-            src={imageUrl}
+            src={imageUrl || "fallback-image-url.jpg"}
             alt={`Piso en ${city}`}
             onError={(e) => {
               e.target.src = "fallback-image-url.jpg";
-            }} // Imagen de respaldo en caso de error
+            }}
+          />
+        ) : (
+          <img
+            className="w-full rounded-t-lg"
+            src="/images/flat.png"
+            alt={`Piso en ${city}`}
           />
         )}
       </picture>
@@ -54,12 +61,16 @@ function FlatItem({
           Aire acondicionado: {hasAC ? "Sí" : "No"}
           {rentPrice && ` $${rentPrice}`}
         </p>
-        <div className="mb-3 text-sm text-gray-600 dark:text-gray-400">
-          <p>{ownerName}</p>
-        </div>
+        {ownerId && (
+          <div className="mb-3 text-sm text-gray-600 dark:text-gray-400">
+            <p>
+              {ownerId.firstName} - {ownerId.lastName}
+            </p>
+          </div>
+        )}
         <div className="flex justify-between">
           <Link
-            to={`/flat/${id}`}
+            to={`/flat/${_id}`}
             className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             View flat
@@ -101,14 +112,14 @@ function FlatItem({
               <HomeIcon className="w-6 h-6 text-indigo-500" />
             </Link>
             <Link
-              to={`/edit/${id}`}
+              to={`/edit/${_id}`}
               className={`cursor-pointer z-10 ${displayPencilIcon}`}
             >
               <PencilIcon className="w-6 h-6 " />
             </Link>
 
             <button
-              onClick={() => onDelete(id)}
+              onClick={() => onDelete(_id)}
               className={`cursor-pointer z-10 ${displayTrashIcon}`}
             >
               <TrashIcon className="w-6 h-6 text-red-500" />

@@ -1,21 +1,18 @@
 import { useState, useEffect } from "react";
 import { Navbar } from "../components/Commons/Navbar.jsx";
 import { FlatItem } from "../components/Flats/FlatItem.jsx";
-import {
-  addFlatToFavorites,
-  removeFlatFromFavorites,
-  getFavoriteIdsOfUser,
-  getFlats,
-} from "../services/firebase";
+import { getFavoriteIdsOfUser } from "../services/firebase";
 import { useAuth } from "../context/authContext";
 import { SkeletonHeader } from "../components/Commons/SkeletonHeader.jsx";
 import { SkeletonCard } from "../components/Commons/SkeletonCard.jsx";
 import { FilterHome } from "../components/Commons/FilterHome.jsx";
+import axiosBase from "../assets/utils.js";
 
 function HomePage() {
   const { currentUser } = useAuth();
   const [flats, setFlats] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [, forceUpdate] = useState();
   const [error, setError] = useState(null);
   const [loadingUserDetails, setLoadingUserDetails] = useState(true);
   const [favoriteIds, setFavoriteIds] = useState([]);
@@ -46,19 +43,17 @@ function HomePage() {
     const fetchFlats = async () => {
       setLoading(true);
       try {
-        const flatsList = await getFlats(
-          filterOptions.sortOption,
-          filterOptions.areaRange,
-          filterOptions.priceRange,
-          filterOptions.search
-        );
+        const { data: flatsList } = await axiosBase.get("/flats", {
+          params: {
+            sortOption: filterOptions.sortOption,
+          },
+        });
         console.log("Flats obtenidos en HomePage:", flatsList);
 
         if (flatsList.length > 0) {
           const updatedFlatsList = flatsList.map((flat) => ({
             ...flat,
-            // isFavorite: currentUser?.favouriteFlats.includes(flat.id),
-            isFavorite: false
+            isFavorite: currentUser?.favouriteFlats.includes(flat._id),
           }));
           setFlats(updatedFlatsList);
         } else {
@@ -99,33 +94,24 @@ function HomePage() {
 
   const handleFavoriteToggle = async (flatId) => {
     if (!userId) {
-      console.error("El ID del usuario no está disponible.");
+      console.error("El ID del uusuario vno está disponible.");
       return;
     }
-
     try {
       const isFavorite = currentUser.favouriteFlats.includes(flatId);
-
-      if (isFavorite) {
-        await removeFlatFromFavorites(userId, flatId);
-        console.log(`Flat ${flatId} eliminado de favoritos.`);
-        // Actualiza la lista de favoritos del usuario
-        currentUser.favouriteFlats = currentUser.favouriteFlats.filter(
-          (id) => id !== flatId
-        );
-      } else {
-        await addFlatToFavorites(userId, flatId);
-        console.log(`Flat ${flatId} agregado a favoritos.`);
-        // Actualiza la lista de favoritos del usuario
-        currentUser.favouriteFlats.push(flatId);
-      }
+      await axiosBase.post("/user/change-favorite", {
+        idUser: userId,
+        idFlat: flatId,
+      });
 
       // Actualiza el estado del flat para reflejar el cambio
-      setFlats((prevFlats) =>
-        prevFlats.map((flat) =>
-          flat.id === flatId ? { ...flat, isFavorite: !isFavorite } : flat
-        )
-      );
+      const flatsAux = [...flats];
+      setFlats([
+        ...flatsAux.map((flat) =>
+          flat._id === flatId ? { ...flat, isFavorite: !isFavorite } : flat
+        ),
+      ]);
+      forceUpdate({});
     } catch (error) {
       console.error("Error al cambiar el estado de favorito:", error);
     }
@@ -135,9 +121,9 @@ function HomePage() {
     console.log("Filtros recibidos desde FilterHome:", filters); // Depuración
     setFilterOptions({
       sortOption: filters.sortOption || null,
-      areaRange: filters.areaRange || null,
-      priceRange: filters.priceRange || null,
-      search: filters.search || null, // Asegúrate de que el valor search esté siendo actualizado
+      // areaRange: filters.areaRange || null,
+      // priceRange: filters.priceRange || null,
+      // search: filters.search || null, // Asegúrate de que el valor search esté siendo actualizado
     });
   };
 
@@ -168,9 +154,9 @@ function HomePage() {
         {flats.length > 0 ? (
           flats.map((flat) => (
             <FlatItem
-              key={flat.id}
+              key={flat._id}
               {...flat}
-              onFavoriteToggle={() => handleFavoriteToggle(flat.id)}
+              onFavoriteToggle={() => handleFavoriteToggle(flat._id)}
               displayFavoriteIcon="block"
               displayPencilIcon="hidden"
               displayTrashIcon="hidden"

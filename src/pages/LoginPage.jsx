@@ -78,7 +78,7 @@ function LoginPage() {
   const handleResetPassword = async (email) => {
     setErrorMessage(""); // Limpiar mensaje de error
     try {
-      await sendPasswordResetEmail(auth, email);
+      await axiosBase.post("/api/auth/forgot-password", { email });
       setErrorMessage("We sent you an email. Check your inbox.");
     } catch (error) {
       if (error.code === "auth/user-not-found") {

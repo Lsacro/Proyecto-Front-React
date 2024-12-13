@@ -7,9 +7,10 @@ import { deleteFlat, removeFlatFromFavorites } from "../services/firebase.js";
 import { AlertFavorites } from "../components/Commons/AlertFavorites.jsx";
 import { SkeletonCard } from "../components/Commons/SkeletonCard.jsx";
 import { MessageAlert } from "../components/Commons/MessageAlert.jsx";
+import axiosBase from "../assets/utils.js";
 
 function FavouritesPage() {
-  const { userDetails } = useAuth();
+  const { currentUser } = useAuth();
   const [favoritesFlats, setFavoritesFlats] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false); // Estado para el indicador de carga
@@ -19,10 +20,14 @@ function FavouritesPage() {
     const fetchFavoritesOfUser = async () => {
       try {
         setLoading(true); // Inicia la carga
-        if (userDetails && userDetails.id) {
-          const favoriteIds = await getFavoriteIdsOfUser(userDetails.id);
+        if (currentUser && currentUser.id) {
+          const favoriteIds = currentUser.favouriteFlats;
+          console.log("favoriteIds:", favoriteIds);
           if (favoriteIds.length > 0) {
-            const flatsDetails = await getFlatsByIds(favoriteIds);
+            const { data: flatsDetails } = await axiosBase.get(
+              "/flats/user-favorites"
+            );
+            console.log("flatsDetails:", flatsDetails);
             setFavoritesFlats(flatsDetails);
           } else {
             setFavoritesFlats([]);
@@ -39,16 +44,17 @@ function FavouritesPage() {
     };
 
     fetchFavoritesOfUser();
-  }, [userDetails]);
+  }, [currentUser]);
 
   const handleDeleteFlat = async (flatId) => {
     try {
-      // Eliminar flat de la base de datos
-      // await deleteFlat(flatId);
-      // Eliminar flat de los favoritos del usuario
-      await removeFlatFromFavorites(userDetails.id, flatId);
+      await axiosBase.post("/user/change-favorite", {
+        idUser: currentUser.id,
+        idFlat: flatId,
+      });
+
       // Actualizar la lista de flats favoritos en el estado
-      setFavoritesFlats(favoritesFlats.filter((flat) => flat.id !== flatId));
+      setFavoritesFlats(favoritesFlats.filter((flat) => flat._id !== flatId));
       // Mostrar mensaje de confirmación
       setConfirmationMessage("Flat removed from favorites successfully!");
     } catch (error) {
@@ -97,7 +103,7 @@ function FavouritesPage() {
                 ownerName={flat.ownerName}
                 ownerEmail={flat.ownerEmail}
                 isFavorite={true}
-                onDelete={handleDeleteFlat}
+                onDelete={() => handleDeleteFlat(flat._id)}
                 displayFavoriteIcon="hidden"
                 displayPencilIcon="hidden"
                 displayTrashIcon="Block"

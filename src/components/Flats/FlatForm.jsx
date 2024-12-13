@@ -22,7 +22,7 @@ const validationSchema = Yup.object({
   rentPrice: Yup.number()
     .required("Rent price is required")
     .positive("Must be a positive number"),
-  availableDate: Yup.date()
+  dateAvailable: Yup.date()
     .required("Available date is required")
     .test("is-future", "Available date must be in the future", (value) => {
       return value && new Date(value) > new Date();
@@ -159,7 +159,7 @@ function FlatForm({
                     label="Rent price"
                   />
                   <FormField
-                    name="availableDate"
+                    name="dateAvailable"
                     type="date"
                     label="Available Date"
                   />

@@ -6,13 +6,13 @@ function FlatList({ flats, onDeleteFlat }) {
     <>
       {flats.map((flat) => (
         <FlatItem
-          key={flat.id}
+          key={flat._id}
           {...flat}
           displayFavoriteIcon="hidden"
           displayPencilIcon="block"
           displayTrashIcon="block"
           displayHomeIcon="block"
-          onDelete={onDeleteFlat}
+          onDelete={() => onDeleteFlat(flat._id)}
         />
       ))}
     </>
