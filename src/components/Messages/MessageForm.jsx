@@ -21,7 +21,7 @@ function MessageForm({ flatId }) {
         console.log("mensaje vacío");
         return;
       }
-      addMessages(currentUser.uid, values.message, flatId);
+      addMessages(values.message, flatId);
       formik.resetForm();
       console.log("Submitted message:", values.message);
     },

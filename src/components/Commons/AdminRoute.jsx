@@ -5,11 +5,7 @@ function AdminRoute() {
   const userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
   // Verifica si el rol del usuario es "admin"
-  return userDetails?.userRole === "admin" ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/home" />
-  );
+  return userDetails?.isAdmin === true ? <Outlet /> : <Navigate to="/home" />;
 }
 
 export { AdminRoute };

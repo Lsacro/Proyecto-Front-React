@@ -3,18 +3,10 @@
 import { useState, useEffect } from "react";
 import { Navbar } from "../components/Commons/Navbar";
 import { UserList } from "../components/Users/UserList";
-import {
-  getUsers,
-  getFlatsByUserId,
-  updateUser,
-  getUserByUid,
-  getUserById,
-  deleteUser,
-} from "../services/firebase";
+import { updateUser, getUserById, deleteUser } from "../services/firebase";
 import { useAuth } from "../context/authContext";
 
 import axios from "axios";
-import { use } from "react";
 
 function AllUsersPage() {
   const { currentUser } = useAuth();

@@ -37,12 +37,9 @@ function FlatView({ flat, isOwner }) {
           {areaSize && `El inmueble tiene un área de ${areaSize}m²`}
           {yearBuilt && `, construida en el año ${yearBuilt}`}.
           {availableDate && ` Disponible hasta ${availableDate}`}
-          Aire acondicionado: {hasAC ? "Sí" : "No"}
-          {rentPrice && ` $${rentPrice}`}
+          <p>Aire acondicionado: {hasAC ? "Sí" : "No"}</p>
+          <p className="font-bold">{rentPrice && ` $${rentPrice}`}</p>
         </p>
-        <p>id del flat: {id}</p>
-        <p>nombre del dueño:{ownerName}</p>
-        <p>Email del dueño{ownerEmail}</p>
         {isOwner && (
           <div className="flex justify-between">
             <Link

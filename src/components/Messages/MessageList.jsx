@@ -6,11 +6,6 @@ import { useAuth } from "../../context/authContext";
 function MessageList({ flat }) {
   const { currentUser, messages } = useAuth();
   const refMessage = useRef(null);
-  const prevMessagesLength = useRef(0);
-
-  console.log(currentUser.displayName, flat);
-
-  console.log("MessageList2", messages);
 
   return (
     <div

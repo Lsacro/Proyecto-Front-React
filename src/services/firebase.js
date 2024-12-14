@@ -155,7 +155,6 @@ export const getFavoriteIdsOfUser = async (userId) => {
 
       return favoriteIds;
     } else {
-      console.log("No such document!");
       return [];
     }
   } catch (error) {
@@ -250,7 +249,6 @@ export const getFlats = async (
       }
     }
 
-    console.log("Flats obtenidos después de aplicar todos los filtros:", flats);
     return flats;
   } catch (error) {
     console.error("Error al obtener los flats:", error);

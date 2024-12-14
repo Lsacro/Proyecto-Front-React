@@ -48,7 +48,6 @@ function HomePage() {
             sortOption: filterOptions.sortOption,
           },
         });
-        console.log("Flats obtenidos en HomePage:", flatsList);
 
         if (flatsList.length > 0) {
           const updatedFlatsList = flatsList.map((flat) => ({
@@ -77,9 +76,8 @@ function HomePage() {
     const fetchFavorites = async () => {
       if (userId) {
         try {
-          console.log("Obteniendo favoritos para el usuario con ID:", userId);
           const fetchedFavoriteIds = await getFavoriteIdsOfUser(userId);
-          console.log("IDs de favoritos obtenidos:", fetchedFavoriteIds);
+
           setFavoriteIds(fetchedFavoriteIds);
         } catch (error) {
           console.error("Error al obtener los favoritos:", error);
@@ -129,7 +127,6 @@ function HomePage() {
 
   // Comprobamos si se sigue cargando
   if (loading || loadingUserDetails) {
-    console.log("Mostrando estado de carga...");
     return (
       <>
         <SkeletonHeader />

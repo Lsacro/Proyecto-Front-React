@@ -1,83 +1,56 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Navbar } from "../components/Commons/Navbar";
 import { FlatView } from "../components/Flats/FlatView";
 import { MessageForm } from "../components/Messages/MessageForm";
 import { MessageList } from "../components/Messages/MessageList";
-import { useParams } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../config/firebase";
 import { useAuth } from "../context/authContext";
+import axios from "axios";
 
 function FlatDetailsPage() {
-  const { id } = useParams();
-  const { currentUser, loadMessages } = useAuth();
-  const [flat, setFlat] = useState(null);
-  const [isOwner, setIsOwner] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [flatId, setFlatId] = useState(null);
-  const memoizedLoadMessages = useCallback(
-    (flatId) => {
-      if (flatId) {
-        loadMessages(flatId);
-      }
-    },
-    [loadMessages]
-  );
+  const { currentUser } = useAuth();
+  const [flat, setFlat] = useState(null); // Datos del flat
+  const [isOwner, setIsOwner] = useState(false); // Verificar si el usuario es propietario
+  const [loading, setLoading] = useState(true); // Indicador de carga
+  const [error, setError] = useState(null); // Manejo de errores
+  const { id } = useParams(); // ID fijo
 
   useEffect(() => {
-    const fetchFlatData = async () => {
+    const getFlatData = async () => {
       try {
-        const flatRef = doc(db, "flats", id);
-        const flatSnap = await getDoc(flatRef);
-
-        if (flatSnap.exists()) {
-          const flatData = { id: flatSnap.id, ...flatSnap.data() };
-          setFlat(flatData);
-          setIsOwner(flatData.ownerEmail === currentUser.email);
-
-          // Solo actualizar flatId si ha cambiado
-          if (flatId !== flatSnap.id) {
-            setFlatId(flatSnap.id);
-          }
-
-          // Cargar mensajes solo si flatId está disponible
-          memoizedLoadMessages(flatSnap.id);
-        } else {
-          setError("No se encontró el flat.");
-        }
-      } catch (error) {
-        setError("Error al obtener los detalles del flat");
-        console.error("Error al obtener los detalles del flat:", error);
+        setLoading(true); // Activar el estado de carga
+        const response = await axios.get(`http://localhost:8080/flats/${id}`);
+        console.log("response", response.data);
+        setFlat(response.data); // Guardar los datos en el estado
+        setIsOwner(response.data.ownerId === currentUser?.id); // Comparar IDs para determinar propiedad
+      } catch (err) {
+        console.error("Error al obtener el flat:", err);
+        setError("Error al cargar los datos del flat."); // Mensaje de error
       } finally {
-        setLoading(false);
+        setLoading(false); // Desactivar el estado de carga
       }
     };
 
-    if (id && currentUser) {
-      fetchFlatData();
-    }
-  }, [id, currentUser, flatId]);
-
-  if (!currentUser) {
-    return <div>Cargando...</div>;
-  }
+    getFlatData();
+  }, [id, currentUser]);
 
   return (
     <>
       <Navbar />
       <section className="flex flex-col items-center justify-center gap-4 mt-28 mr-4 ml-4 mb-16">
         {loading ? (
-          <p>Cargando...</p>
+          <p>Cargando...</p> // Mostrar indicador de carga
         ) : error ? (
-          <p>{error}</p>
+          <p>{error}</p> // Mostrar mensaje de error
         ) : (
-          flat && <FlatView flat={flat} isOwner={isOwner} />
+          flat && (
+            <>
+              <FlatView flat={flat} isOwner={isOwner} />
+              <MessageList flat={flat} />
+              <MessageForm flatId={flat._id} />
+            </>
+          )
         )}
-        <p>uid del usuario: {currentUser.uid}</p>
-        <p>Nombre del usuario logueado: {currentUser.displayName}</p>
-        {flat && <MessageList flatId={flat.id} flat={flat} />}
-        <MessageForm flatId={flat?.id} />
       </section>
     </>
   );

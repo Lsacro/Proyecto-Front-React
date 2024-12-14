@@ -1,9 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 
 //Importaciones Backend
@@ -101,8 +96,7 @@ export const AuthProvider = ({ children }) => {
     });
   }, []); */
 
-  const addMessages = async (uidMessage, textInput, flatId) => {
-    console.log("addMessages");
+  const addMessages = async (textInput, flatId) => {
     try {
       await axios.post(`http://localhost:8080/flats/${flatId}/messages`, {
         content: textInput,
@@ -115,7 +109,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const loadMessages = async (flatId) => {
-    console.log("getAllMessagesByFlatId");
     try {
       const response = await axios.get(
         `http://localhost:8080/flats/${flatId}/messages`
