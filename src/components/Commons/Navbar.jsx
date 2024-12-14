@@ -41,7 +41,7 @@ function Navbar({ onClick }) {
         >
           <BuildingOffice2Icon className="w-8 h-8 text-gray-800 dark:text-white" />
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-            Flat Finder
+            Finder Flat
           </span>
         </Link>
         <div className="flex gap-2 justify-center items-center px-1 md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">

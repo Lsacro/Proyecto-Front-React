@@ -79,20 +79,18 @@ function UserList({
                 user.profilePicture ||
                 "https://flowbite.com/docs/images/people/profile-picture-4.jpg"
               }
-              alt={`${user.name} image`}
+              alt={`${user.Nombre} image`}
             />
             <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
-              {user.name} {user.lastname}
+              {user.Nombre} {user.Apellido}
             </h5>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              {user.email}
+              {user.Email}
             </span>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              {user.date || "N/A"}
+              {new Date(user.FechaNacimiento).toLocaleDateString() || "N/A"}
             </span>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              UID: {user.uid}
-            </span>
+
             <ul className="flex gap-4">
               <li className="flex flex-col justify-center items-center mt-4">
                 <HomeIcon className="w-6 h-6" />
@@ -101,7 +99,7 @@ function UserList({
               </li>
               <li className="flex flex-col justify-center items-center mt-4">
                 <UserIcon className="w-6 h-6" />
-                <span>{user.userRole}</span>
+                <span>{user.Administrador === "Si" ? "Admin" : "User"}</span>
               </li>
               <li className="flex flex-col justify-center items-center mt-4">
                 <HeartIcon className="w-6 h-6" />

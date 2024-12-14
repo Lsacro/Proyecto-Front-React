@@ -13,12 +13,30 @@ import {
 } from "../services/firebase";
 import { useAuth } from "../context/authContext";
 
+import axios from "axios";
+import { use } from "react";
+
 function AllUsersPage() {
   const { currentUser } = useAuth();
   const [users, setUsers] = useState([]);
   const [dropdownStates, setDropdownStates] = useState({});
 
   useEffect(() => {
+    const getAllUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/user");
+        console.log("response", response.data);
+        setUsers(response.data);
+        return response.data;
+      } catch (error) {
+        return error;
+      }
+    };
+
+    getAllUsers();
+  }, []);
+
+  /*   useEffect(() => {
     const fetchUsers = async () => {
       try {
         // Obtener los usuarios
@@ -50,7 +68,7 @@ function AllUsersPage() {
     };
 
     fetchUsers();
-  }, []);
+  }, []); */
   const toggleDropdown = (uid) => {
     setDropdownStates((prevStates) => ({
       ...prevStates,
