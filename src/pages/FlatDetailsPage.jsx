@@ -57,7 +57,7 @@ function FlatDetailsPage() {
     if (id && currentUser) {
       fetchFlatData();
     }
-  }, [id, currentUser, flatId, memoizedLoadMessages]);
+  }, [id, currentUser, flatId]);
 
   if (!currentUser) {
     return <div>Cargando...</div>;
