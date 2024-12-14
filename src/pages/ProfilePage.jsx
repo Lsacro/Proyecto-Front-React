@@ -160,7 +160,7 @@ function ProfilePage() {
           {!isEditMode && (
             <FooterForm
               message="Do you want to change your data?"
-              linkText="Login"
+              linkText="Home"
               to="/"
             />
           )}

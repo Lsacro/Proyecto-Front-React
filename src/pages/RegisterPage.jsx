@@ -58,11 +58,12 @@ function RegisterPage() {
         email: values.email,
         password: values.password,
         birthDate: values.birthDate,
+        profileImage: finalImageUrl,
       };
 
-      if (finalImageUrl) {
+      /*       if (finalImageUrl) {
         body.profileImage = finalImageUrl;
-      }
+      } */
       const response = await axiosBase.post("/api/auth/register", body);
 
       const { user, token } = response.data;

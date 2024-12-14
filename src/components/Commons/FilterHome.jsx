@@ -91,13 +91,14 @@ function FilterHome({ onFilterChange, initialValues }) {
                 <option value="100-500">100-500 USD</option>
                 <option value="500-1000">500-1000 USD</option>
               </FormField>
-            </div>
-
-            {/* Botón de aplicar */}
-            <div className="flex justify-center mt-4">
-              <button type="submit" className="btn-primary">
-                Apply
-              </button>
+              <div className="flex justify-center mt-4">
+                <button
+                  type="submit"
+                  className="inline-flex items-center px-3 py-2 text-sm font-medium text-center w-15 h-12 text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  Apply
+                </button>
+              </div>
             </div>
           </Form>
         )}

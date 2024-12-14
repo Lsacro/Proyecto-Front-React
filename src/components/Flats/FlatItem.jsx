@@ -28,11 +28,11 @@ function FlatItem({
   onDelete,
 }) {
   return (
-    <article className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <article className="max-w-xs bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <picture>
         {imageUrl ? (
           <img
-            className="w-full rounded-t-lg"
+            className="max-h-[210px] min-h-[210px] rounded-t-lg"
             src={imageUrl || "fallback-image-url.jpg"}
             alt={`Piso en ${city}`}
             onError={(e) => {
@@ -41,7 +41,7 @@ function FlatItem({
           />
         ) : (
           <img
-            className="w-full rounded-t-lg"
+            className="max-w-xs rounded-t-lg"
             src="/images/flat.png"
             alt={`Piso en ${city}`}
           />
