@@ -47,7 +47,16 @@ function LoginForm({
   };
 
   return (
-    <section className="flex min-h-screen justify-center bg-gray-100 font-sans dark:bg-gray-900 antialiased">
+
+    
+ 
+      <div className="w-full min-h-screen bg-black">
+       {/* <iframe className="absolute w-full min-h-screen" src="https://www.youtube.com/embed/mcGCnWG-7nc?autoplay=1&loop=1&playlist=mcGCnWG-7nc&mute=1&controls=0" allow="autoplay; loop; muted;" referrerPolicy="strict-origin-when-cross-origin" allowfullscreen/> */}
+      <video className="w-full absolute min-h-screen" autoPlay muted>
+        <source src="https://tracking-images.s3.us-east-2.amazonaws.com/flats.mp4" type="video/mp4"/>
+        Your browser does not support the video tag.
+      </video>
+    <section className="flex fixed min-h-screen w-full justify-center font-sans dark:bg-gray-900 antialiased">
       <div className="container rounded my-auto max-w-md border-2 border-gray-200 p-3 dark:border-gray-700 bg-white dark:bg-gray-900 antialiased">
         <div className="my-6 text-center">
           <HeaderForm
@@ -137,6 +146,7 @@ function LoginForm({
         </div>
       </div>
     </section>
+    </div> 
   );
 }
 
