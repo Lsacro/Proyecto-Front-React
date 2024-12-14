@@ -13,16 +13,25 @@ function FlatDetailsPage() {
   const [isOwner, setIsOwner] = useState(false); // Verificar si el usuario es propietario
   const [loading, setLoading] = useState(true); // Indicador de carga
   const [error, setError] = useState(null); // Manejo de errores
-  const { id } = useParams(); // ID fijo
+  const { id } = useParams(); // ID del flat desde la URL
+  const [messages, setMessages] = useState([]); // Almacenar los mensajes
 
   useEffect(() => {
     const getFlatData = async () => {
       try {
         setLoading(true); // Activar el estado de carga
-        const response = await axios.get(`http://localhost:8080/flats/${id}`);
-        console.log("response", response.data);
-        setFlat(response.data); // Guardar los datos en el estado
-        setIsOwner(response.data.ownerId === currentUser?.id); // Comparar IDs para determinar propiedad
+        const flatResponse = await axios.get(
+          `http://localhost:8080/flats/${id}`
+        );
+        setFlat(flatResponse.data); // Guardar los datos del flat en el estado
+        setIsOwner(flatResponse.data.ownerId === currentUser?.id); // Comparar IDs para determinar propiedad
+
+        // Cargar los mensajes del flat
+        const messagesResponse = await axios.get(
+          `http://localhost:8080/flats/${id}/messages`
+        );
+        setMessages(messagesResponse.data); // Guardar los mensajes en el estado
+        console.log("response flat new data ", messagesResponse.data);
       } catch (err) {
         console.error("Error al obtener el flat:", err);
         setError("Error al cargar los datos del flat."); // Mensaje de error
@@ -32,7 +41,7 @@ function FlatDetailsPage() {
     };
 
     getFlatData();
-  }, [id, currentUser]);
+  }, [id, currentUser]); // Dependencias del useEffect
 
   return (
     <>
@@ -46,8 +55,10 @@ function FlatDetailsPage() {
           flat && (
             <>
               <FlatView flat={flat} isOwner={isOwner} />
-              <MessageList flat={flat} />
-              <MessageForm flatId={flat._id} />
+              <MessageList flat={messages} />{" "}
+              {/* Pasamos los mensajes correctamente */}
+              <MessageForm flatId={flat._id} />{" "}
+              {/* Pasamos solo el ID del flat */}
             </>
           )
         )}

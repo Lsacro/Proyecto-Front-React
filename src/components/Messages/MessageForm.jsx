@@ -7,6 +7,9 @@ import * as Yup from "yup";
 function MessageForm({ flatId }) {
   const { currentUser, addMessages } = useAuth();
 
+  const storeData = localStorage.getItem("userDetails");
+  const senderId = JSON.parse(storeData);
+
   const formik = useFormik({
     initialValues: {
       message: "",
@@ -21,7 +24,9 @@ function MessageForm({ flatId }) {
         console.log("mensaje vacío");
         return;
       }
-      addMessages(values.message, flatId);
+      const storeData = localStorage.getItem("userDetails");
+      const senderId = JSON.parse(storeData);
+      addMessages(values.message, flatId, senderId.id);
       formik.resetForm();
       console.log("Submitted message:", values.message);
     },

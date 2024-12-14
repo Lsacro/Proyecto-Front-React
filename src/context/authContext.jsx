@@ -96,12 +96,12 @@ export const AuthProvider = ({ children }) => {
     });
   }, []); */
 
-  const addMessages = async (textInput, flatId) => {
+  const addMessages = async (textInput, flatId, senderId) => {
     try {
       await axios.post(`http://localhost:8080/flats/${flatId}/messages`, {
         content: textInput,
-        flatId: "675b2f7cc376a55e5ab14305",
-        senderId: "67562d2a0fa6f6f436b5d434",
+        flatId,
+        senderId,
       });
     } catch (error) {
       return error;
@@ -113,7 +113,6 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.get(
         `http://localhost:8080/flats/${flatId}/messages`
       );
-      console.log("response", response.data);
       setMessages(response.data.comments);
     } catch (error) {
       return error;
