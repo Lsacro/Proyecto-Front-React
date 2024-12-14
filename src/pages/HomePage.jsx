@@ -29,10 +29,10 @@ function HomePage() {
       setUserId(currentUser.id);
       setLoadingUserDetails(false); // Detenemos la carga del usuario si se tiene el ID
       // Extrae solo los campos necesarios
-      const { isAdmin, id, email } = currentUser;
+      const { isAdmin, id, email, firstName, lastName } = currentUser;
 
       // Guardar solo esos campos en localStorage
-      const userDataToStore = { isAdmin, id, email };
+      const userDataToStore = { isAdmin, id, email, firstName, lastName };
       localStorage.setItem("userDetails", JSON.stringify(userDataToStore));
     } else if (currentUser === null) {
       console.log("Esperando a que userDetails esté disponible...");

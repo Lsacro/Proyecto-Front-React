@@ -31,13 +31,15 @@ function Navbar({ onClick }) {
     }
   };
 
+  const storeData = localStorage.getItem("userDetails");
+  const userDetails = JSON.parse(storeData);
+
   const defaultProfileSVG = `
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
     <circle cx="12" cy="12" r="10" fill="#E5E7EB" />
     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.33 0-6 2.67-6 6h12c0-3.33-2.67-6-6-6z" fill="#9CA3AF" />
   </svg>
 `;
-
 
   return (
     <nav className="bg-white dark:bg-gray-900 w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
@@ -52,10 +54,15 @@ function Navbar({ onClick }) {
           </span>
         </Link>
         <div className="flex gap-2 justify-center items-center px-1 md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          {currentUser && <span> {currentUser.displayName}</span>}
+          {<span> {userDetails.firstName + " " + userDetails.lastName} </span>}
           <img
             className="w-10 h-10 object-cover rounded-full"
-            src={currentUser.profileImage || `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(defaultProfileSVG)}`}
+            src={
+              currentUser.profileImage ||
+              `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+                defaultProfileSVG
+              )}`
+            }
             alt="profile-photo"
           />
 
