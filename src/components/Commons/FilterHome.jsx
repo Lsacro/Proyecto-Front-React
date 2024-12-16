@@ -49,6 +49,7 @@ function FilterHome({ onFilterChange, initialValues }) {
                 error={touched.sortOption && errors.sortOption}
                 placeholder="Select an option"
               >
+                <option value="">Select sort range</option>
                 <option value="price_asc">Price min-max</option>
                 <option value="price_desc">Price max-min</option>
               </FormField>
