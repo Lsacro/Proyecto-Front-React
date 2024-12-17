@@ -12,6 +12,9 @@ function Navbar({ onClick }) {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
 
+  const localStoreData = localStorage.getItem("userDetails");
+  const userData = JSON.parse(localStoreData);
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -111,7 +114,9 @@ function Navbar({ onClick }) {
             {/* <NavbarLinks to="/update-profile" name="Update Profile" /> */}
             <NavbarLinks to="/my-flats" name="My Flats" />
             <NavbarLinks to="/favourites" name="Favorites" />
-            <NavbarLinks to="/all-users" name="Users" />
+            {userData.isAdmin ? (
+              <NavbarLinks to="/all-users" name="Users" />
+            ) : null}
             <NavbarLinks to="/profile" name="Profile" />
           </ul>
         </div>
