@@ -21,7 +21,7 @@ function ProfilePage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [imageUrl, setImageUrl] = useState(
     currentUser?.profileImage ||
-      "https://avatars.githubusercontent.com/u/169313485?v=4"
+      "https://w7.pngwing.com/pngs/627/693/png-transparent-computer-icons-user-user-icon.png"
   );
   const [initialValues, setInitialValues] = useState({
     firstName: "",
@@ -104,7 +104,7 @@ function ProfilePage() {
                       id="image-user"
                       src={imageUrl}
                       alt="Profile"
-                      className="w-32 rounded-full"
+                      className=" max-w-48 max-h-32 rounded-smw-full aspect-square object-cover rounded-full border-1"
                     />
                   </div>
                 </div>

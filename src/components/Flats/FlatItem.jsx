@@ -32,7 +32,7 @@ function FlatItem({
       <picture>
         {imageUrl ? (
           <img
-            className="max-h-[210px] min-h-[210px] rounded-t-lg"
+            className="h-[230px] w-[320px] rounded-t-lg object-cover"
             src={imageUrl || "fallback-image-url.jpg"}
             alt={`Piso en ${city}`}
             onError={(e) => {
@@ -65,8 +65,9 @@ function FlatItem({
         {ownerId && (
           <div className="mb-3 text-sm text-gray-600 dark:text-gray-400">
             <p>
-              {ownerId.firstName} - {ownerId.lastName}
+              {ownerId.firstName} {ownerId.lastName}
             </p>
+            <p>{ownerId.email}</p>
           </div>
         )}
         <div className="flex justify-between">
@@ -106,18 +107,20 @@ function FlatItem({
                 <HeartOutline className="h-6 w-6 text-gray-900" />
               )}
             </button>
-            <Link
-              to="/new-flat"
-              className={`cursor-pointer z-10 ${displayHomeIcon}`}
-            >
-              <HomeIcon className="w-6 h-6 text-indigo-500" />
-            </Link>
-            <Link
-              to={`/edit/${_id}`}
-              className={`cursor-pointer z-10 ${displayPencilIcon}`}
-            >
-              <PencilIcon className="w-6 h-6 " />
-            </Link>
+            <div className="flex gap-4 items-center ">
+              <Link
+                to="/new-flat"
+                className={`cursor-pointer z-10 ${displayHomeIcon}`}
+              >
+                <HomeIcon className="w-6 h-6 text-indigo-500" />
+              </Link>
+              <Link
+                to={`/edit/${_id}`}
+                className={`cursor-pointer z-10 ${displayPencilIcon}`}
+              >
+                <PencilIcon className="w-6 h-6 " />
+              </Link>
+            </div>
 
             <button
               onClick={() => onDelete(_id)}

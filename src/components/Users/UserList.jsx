@@ -3,7 +3,9 @@
 import { HeartIcon } from "@heroicons/react/24/solid";
 import { UserIcon } from "@heroicons/react/24/solid";
 import { HomeIcon } from "@heroicons/react/24/solid";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 function UserList({
   users,
@@ -12,6 +14,20 @@ function UserList({
   onToggleRole,
   onDeleteUser,
 }) {
+  const [flatsCount, setFlatsCount] = useState([]);
+
+  useEffect(() => {
+    const flatsCounter = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/flats");
+        setFlatsCount(response.data.map((flat) => flat.ownerId));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    flatsCounter();
+  }, []);
+
   return (
     <>
       {users.map((user) => (
@@ -74,10 +90,10 @@ function UserList({
 
           <div className="flex flex-col items-center pb-10">
             <img
-              className="w-24 h-24 mb-3 rounded-full shadow-lg"
+              className="w-24 h-24 object-cover rounded-full shadow-lg"
               src={
                 user.image ||
-                "https://flowbite.com/docs/images/people/profile-picture-4.jpg"
+                "https://w7.pngwing.com/pngs/627/693/png-transparent-computer-icons-user-user-icon.png"
               }
               alt={`${user.Nombre} image`}
             />
@@ -95,7 +111,9 @@ function UserList({
               <li className="flex flex-col justify-center items-center mt-4">
                 <HomeIcon className="w-6 h-6" />
 
-                <span>{user.flatsCount}</span>
+                <span>
+                  {flatsCount.filter((flat) => flat._id === user.id).length}
+                </span>
               </li>
               <li className="flex flex-col justify-center items-center mt-4">
                 <UserIcon className="w-6 h-6" />
@@ -103,7 +121,7 @@ function UserList({
               </li>
               <li className="flex flex-col justify-center items-center mt-4">
                 <HeartIcon className="w-6 h-6" />
-                <span>{user.favorites?.length || 0}</span>
+                <span>{user.flats?.length || 0}</span>
               </li>
             </ul>
           </div>

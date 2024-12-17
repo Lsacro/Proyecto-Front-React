@@ -34,25 +34,29 @@ function MessageForm({ flatId }) {
 
   return (
     <form onSubmit={formik.handleSubmit}>
-      <div className="flex mb-3">
-        <input
-          type="text"
-          className="form-input flex-1 border border-gray-300 rounded-l-md px-3 py-2 placeholder-gray-500"
-          placeholder="Type your message"
-          aria-label="Type your message"
-          name="message"
-          value={formik.values.message}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-        />
-        <button
-          className="btn btn-outline-secondary border border-gray-300 rounded-r-md bg-white px-4 py-2 text-gray-700"
-          type="submit"
-          id="button-addon2"
-        >
-          Send
-        </button>
-      </div>
+      <div className="flex mb-3"> </div>
+      {
+        <>
+          <input
+            type="text"
+            className="form-input flex-1 border border-gray-300 rounded-l-md px-3 py-2 placeholder-gray-500 w-[300px]"
+            placeholder="Type your message"
+            aria-label="Type your message"
+            name="message"
+            value={formik.values.message}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+          />
+          <button
+            className="btn btn-outline-secondary border border-gray-300 rounded-r-md bg-white px-4 py-2 text-gray-700"
+            type="submit"
+            id="button-addon2"
+          >
+            Send
+          </button>
+        </>
+      }
+
       {formik.touched.message && formik.errors.message ? (
         <div className="text-red-500 text-sm mt-1">{formik.errors.message}</div>
       ) : null}

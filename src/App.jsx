@@ -30,6 +30,7 @@ const AppRoutes = () => {
         <Route path="/favourites" element={<FavouritesPage />} />
         <Route path="/my-flats" element={<MyFlatsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/profile/:id" element={<ProfilePage />} />
 
         {/* Ruta admin */}
         <Route element={<AdminRoute />}>

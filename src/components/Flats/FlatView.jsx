@@ -21,7 +21,7 @@ function FlatView({ flat, isOwner }) {
       <picture>
         {imageUrl && (
           <img
-            className="w-full rounded-t-lg"
+            className="h-[270px] w-[385px] rounded-t-lg object-cover"
             src={imageUrl}
             alt={`Piso en ${city}`}
           />

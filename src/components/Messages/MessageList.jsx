@@ -11,7 +11,7 @@ function MessageList({ flat }) {
 
   return (
     <div
-      className="w-80"
+      className="w-[375px] overflow-y-scroll"
       style={{ height: "50vh", overflow: "scroll" }}
       ref={refMessage}
     >
