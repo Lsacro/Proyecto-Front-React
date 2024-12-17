@@ -1,145 +1,130 @@
-//Pagina para mostrar todo los usuarios registrados (solo la puede ver el admin)
-
 import { useState, useEffect } from "react";
-import { Navbar } from "../components/Commons/Navbar";
-import { UserList } from "../components/Users/UserList";
-import { updateUser, getUserById, deleteUser } from "../services/firebase";
-import { useAuth } from "../context/authContext";
-
+import { Navbar } from "../components/Commons/Navbar.jsx";
+import { UserList } from "../components/Users/UserList.jsx";
+import { FIlterUsers } from "../components/Commons/FilterUsers.jsx";
 import axios from "axios";
 
 function AllUsersPage() {
-  const { currentUser } = useAuth();
-  const [users, setUsers] = useState([]);
-  const [dropdownStates, setDropdownStates] = useState({});
+  const [users, setUsers] = useState([]); // Datos originales
+  const [filteredUsers, setFilteredUsers] = useState([]); // Datos filtrados
+  const [dropdownStates, setDropdownStates] = useState({}); // Estado de los dropdowns
+  const [filterOptions, setFilterOptions] = useState({
+    sortOption: "",
+    search: "",
+    ageRange: "",
+    flatsCount: "",
+    favoritesCount: "",
+  });
 
+  // Obtener todos los usuarios al cargar la página
   useEffect(() => {
     const getAllUsers = async () => {
       try {
         const response = await axios.get("http://localhost:8080/user");
         setUsers(response.data);
-        return response.data;
-      } catch (error) {
-        return error;
-      }
-    };
-
-    getAllUsers();
-  }, []);
-
-  /*   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        // Obtener los usuarios
-        const usersData = await getUsers();
-        console.log("Usuarios obtenidos:", usersData); // Log para verificar los usuarios recuperados
-
-        // Obtener la cantidad de flats para cada usuario
-        const usersWithFlats = await Promise.all(
-          usersData.map(async (user) => {
-            try {
-              const userFlats = await getFlatsByUserId(user.uid);
-              console.log(`Flats del usuario ${user.uid}:`, userFlats); // Log para verificar flats recuperados
-              return { ...user, flatsCount: userFlats.length }; // Añadir la cantidad de flats
-            } catch (error) {
-              console.error(
-                `Error obteniendo flats para el usuario ${user.uid}:`,
-                error
-              );
-              return { ...user, flatsCount: 0 }; // En caso de error, asignar 0 flats
-            }
-          })
-        );
-
-        console.log("Usuarios con cantidad de flats:", usersWithFlats); // Log para verificar el estado final
-        setUsers(usersWithFlats);
+        setFilteredUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
+    getAllUsers();
+  }, []);
 
-    fetchUsers();
-  }, []); */
-  const toggleDropdown = (uid) => {
-    setDropdownStates((prevStates) => ({
-      ...prevStates,
-      [uid]: !prevStates[uid],
+  // Actualizar los filtros
+  const handleFilterChange = (filters) => {
+    setFilterOptions(filters);
+  };
+
+  // Lógica de filtrado y ordenamiento
+  useEffect(() => {
+    let updatedUsers = [...users];
+
+    // Filtro por búsqueda
+    if (filterOptions.search) {
+      updatedUsers = updatedUsers.filter((user) =>
+        user.Nombre.toLowerCase().includes(filterOptions.search.toLowerCase())
+      );
+    }
+
+    // Ordenamiento
+    if (filterOptions.sortOption === "A-Z") {
+      updatedUsers.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
+    } else if (filterOptions.sortOption === "Z-A") {
+      updatedUsers.sort((a, b) => b.Nombre.localeCompare(a.Nombre));
+    } else if (filterOptions.sortOption === "age_desc") {
+      updatedUsers.sort(
+        (a, b) =>
+          calculateAge(b.FechaNacimiento) - calculateAge(a.FechaNacimiento)
+      );
+    } else if (filterOptions.sortOption === "age_asc") {
+      updatedUsers.sort(
+        (a, b) =>
+          calculateAge(a.FechaNacimiento) - calculateAge(b.FechaNacimiento)
+      );
+    }
+
+    setFilteredUsers(updatedUsers);
+  }, [filterOptions, users]);
+
+  // Calcular edad desde FechaNacimiento
+  const calculateAge = (birthdate) => {
+    const today = new Date();
+    const birthDate = new Date(birthdate);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    if (
+      monthDifference < 0 ||
+      (monthDifference === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age;
+  };
+
+  // Manejo de dropdowns
+  const handleToggleDropdown = (userId) => {
+    setDropdownStates((prevState) => ({
+      ...prevState,
+      [userId]: !prevState[userId],
     }));
   };
 
-  const handleToggleRole = async (userId, currentRole, userUid) => {
-    // Validar si el usuario logueado intenta cambiar el role
-    if (userUid === currentUser.uid) {
-      alert("No puedes cambiar tu propia rol.");
-      return; // Detener la ejecución si los UIDs coinciden
-    }
+  // Manejar cambio de rol
+  const handleToggleRole = async (id, currentRole, uid) => {
     try {
-      console.log(
-        `Iniciando proceso de cambio de rol para el usuario: ${userId}`
-      );
-
-      // Verificar si el usuario existe en la base de datos
-      console.log("Buscando usuario en la base de datos...");
-      const user = await getUserById(userId);
-
-      if (!user) {
-        console.error(`El usuario ${userId} no existe en la base de datos`);
-        return;
-      }
-
-      console.log("Usuario encontrado:", user);
-
-      // Alternar el rol actual
-      const newRole = currentRole === "admin" ? "user" : "admin";
-
-      // Actualizar el usuario en la base de datos
-      console.log("Actualizando usuario en la base de datos...");
-      await updateUser(userId, { userRole: newRole });
-      console.log(
-        `Usuario ${userId} actualizado a ${newRole} en la base de datos`
-      );
-
-      // Actualizar el estado de users en el componente
-      console.log("Actualizando estado de users en el componente...");
-      setUsers((prevUsers) =>
-        prevUsers.map((u) =>
-          u.id === userId ? { ...u, userRole: newRole } : u
+      const newRole = currentRole === "Admin" ? "User" : "Admin";
+      await axios.put(`http://localhost:8080/users/${id}/role`, {
+        role: newRole,
+      });
+      setUsers((prevState) =>
+        prevState.map((user) =>
+          user.id === id ? { ...user, userRole: newRole } : user
         )
       );
-      console.log(`Rol del usuario ${userId} actualizado a ${newRole}`);
     } catch (error) {
-      console.error(`Error al cambiar el rol del usuario ${userId}:`, error);
+      console.error("Error changing role:", error);
     }
   };
 
-  const handleDeleteUser = async (userId, userUid) => {
-    // Validar si el usuario logueado intenta eliminarse a sí mismo
-    if (userUid === currentUser.uid) {
-      alert("No puedes eliminar tu propia cuenta.");
-      return; // Detener la ejecución si los UIDs coinciden
-    }
+  // Manejar eliminación de usuario
+  const handleDeleteUser = async (id, uid) => {
     try {
-      // 1. Llamar a la función para eliminar el usuario de Firestore
-      await deleteUser(userId);
-
-      // 2. Actualizar el estado local de los usuarios
-      setUsers((prevUsers) => prevUsers.filter((u) => u.id !== userId));
-
-      console.log(`Usuario con ID ${userId} eliminado exitosamente.`);
+      await axios.delete(`http://localhost:8080/users/${id}`);
+      setUsers((prevState) => prevState.filter((user) => user.id !== id));
     } catch (error) {
-      console.error("Error eliminando usuario:", error);
-      alert("Hubo un error al eliminar el usuario.");
+      console.error("Error deleting user:", error);
     }
   };
 
   return (
     <>
       <Navbar />
+      <FIlterUsers onFilterChange={handleFilterChange} />
       <section className="flex flex-wrap justify-center gap-4 mt-28 mr-4 ml-4 mb-16 overflow-hidden">
         <UserList
-          users={users}
+          users={filteredUsers}
           dropdownStates={dropdownStates}
-          onToggleDropdown={toggleDropdown}
+          onToggleDropdown={handleToggleDropdown}
           onToggleRole={handleToggleRole}
           onDeleteUser={handleDeleteUser}
         />
