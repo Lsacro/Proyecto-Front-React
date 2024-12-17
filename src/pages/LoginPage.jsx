@@ -59,7 +59,7 @@ function LoginPage() {
         email: user.email,
         password: user.uid,
         firstName: user.displayName,
-        lastName: "Google",
+        lastName: " ",
         birthDate: eighteenYearsAgo,
         profileImage: user.photoURL,
       });

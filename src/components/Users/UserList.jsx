@@ -76,7 +76,7 @@ function UserList({
             <img
               className="w-24 h-24 mb-3 rounded-full shadow-lg"
               src={
-                user.profilePicture ||
+                user.image ||
                 "https://flowbite.com/docs/images/people/profile-picture-4.jpg"
               }
               alt={`${user.Nombre} image`}
