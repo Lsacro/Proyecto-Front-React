@@ -18,8 +18,8 @@ function MessageList({ flat }) {
       {flat.map((item, index) => (
         <article key={index} className="flex items-start gap-2.5">
           <img
-            className="w-8 h-8 rounded-full"
-            src="https://cdn-icons-png.flaticon.com/512/3135/3135768.png"
+            className="w-10 h-10 object-cover rounded-full"
+            src={item.senderId.profileImage}
             alt="Jese image"
           />
           <div className="flex flex-col gap-1 w-full max-w-[320px]">

@@ -35,6 +35,8 @@ function LoginPage() {
       // Guardar usuario y token en el contexto
       handleAuth(user, token);
 
+      alert("Welcome");
+
       // Redirigir al usuario
       navigate("/home");
     } catch (error) {
@@ -66,6 +68,8 @@ function LoginPage() {
 
       // Guardar usuario y token en el contexto
       handleAuth(data.user, data.token);
+
+      alert("Welcome " + data.user.firstName);
       // Redirigir al usuario
       navigate("/home");
     } catch (error) {

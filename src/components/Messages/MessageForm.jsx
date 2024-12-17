@@ -28,6 +28,7 @@ function MessageForm({ flatId }) {
       const senderId = JSON.parse(storeData);
       addMessages(values.message, flatId, senderId.id);
       formik.resetForm();
+      alert("Message sent successfully!");
       console.log("Submitted message:", values.message);
     },
   });

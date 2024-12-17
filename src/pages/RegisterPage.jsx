@@ -71,6 +71,8 @@ function RegisterPage() {
       // Guardar usuario y token en el contexto
       handleAuth(user, token);
 
+      alert("User registered successfully");
+
       // Redirigir al usuario a la página principal después de registrarse
       navigate("/home");
       console.log("User registered successfully");

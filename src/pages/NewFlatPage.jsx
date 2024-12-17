@@ -69,6 +69,8 @@ function NewFlatPage() {
 
       setShowSuccessMessage(true);
 
+      alert("Flat created successfully!");
+
       navigate("/home");
     } catch (error) {
       console.error("Error adding flat: ", error);
