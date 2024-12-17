@@ -21,6 +21,7 @@ function HomePage() {
     sortOption: null,
     areaRange: null,
     priceRange: null,
+    search: null,
   });
 
   useEffect(() => {
@@ -46,6 +47,9 @@ function HomePage() {
         const { data: flatsList } = await axiosBase.get("/flats", {
           params: {
             sortOption: filterOptions.sortOption,
+            areaRange: filterOptions.areaRange,
+            priceRange: filterOptions.priceRange,
+            search: filterOptions.search,
           },
         });
 
@@ -119,9 +123,9 @@ function HomePage() {
     console.log("Filtros recibidos desde FilterHome:", filters); // Depuración
     setFilterOptions({
       sortOption: filters.sortOption || null,
-      // areaRange: filters.areaRange || null,
-      // priceRange: filters.priceRange || null,
-      // search: filters.search || null, // Asegúrate de que el valor search esté siendo actualizado
+      areaRange: filters.areaRange || null,
+      priceRange: filters.priceRange || null,
+      search: filters.search || null, // Asegúrate de que el valor search esté siendo actualizado
     });
   };
 
