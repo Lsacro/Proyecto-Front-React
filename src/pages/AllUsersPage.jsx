@@ -36,6 +36,7 @@ function AllUsersPage() {
   };
 
   // Lógica de filtrado y ordenamiento
+  // Lógica de filtrado y ordenamiento
   useEffect(() => {
     let updatedUsers = [...users];
 
@@ -44,6 +45,33 @@ function AllUsersPage() {
       updatedUsers = updatedUsers.filter((user) =>
         user.Nombre.toLowerCase().includes(filterOptions.search.toLowerCase())
       );
+    }
+
+    // Filtro por rango de edad
+    if (filterOptions.ageRange) {
+      const [minAge, maxAge] = filterOptions.ageRange.split("-").map(Number);
+      updatedUsers = updatedUsers.filter((user) => {
+        const age = calculateAge(user.FechaNacimiento);
+        return age >= minAge && (maxAge ? age <= maxAge : true); // Se maneja el caso de "50+".
+      });
+    }
+
+    // Filtro por número de flats
+    if (filterOptions.flatsCount) {
+      const minFlats = parseInt(filterOptions.flatsCount, 10);
+      updatedUsers = updatedUsers.filter((user) => {
+        const flatsCount = user.flats?.length || 0;
+        return flatsCount >= minFlats;
+      });
+    }
+
+    // Filtro por número de favoritos
+    if (filterOptions.favoritesCount) {
+      const minFavorites = parseInt(filterOptions.favoritesCount, 10);
+      updatedUsers = updatedUsers.filter((user) => {
+        const favoritesCount = user.favorites?.length || 0;
+        return favoritesCount >= minFavorites;
+      });
     }
 
     // Ordenamiento
