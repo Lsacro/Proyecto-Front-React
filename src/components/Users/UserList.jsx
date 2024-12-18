@@ -2,10 +2,13 @@
 
 import { HeartIcon } from "@heroicons/react/24/solid";
 import { UserIcon } from "@heroicons/react/24/solid";
-import { HomeIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+
+import { PencilIcon } from "@heroicons/react/24/solid";
+import { TrashIcon } from "@heroicons/react/24/solid";
+import { HomeIcon } from "@heroicons/react/24/solid";
 
 function UserList({
   users,
@@ -124,6 +127,20 @@ function UserList({
                 <span>{user.flats?.length || 0}</span>
               </li>
             </ul>
+          </div>
+          <div className="flex items-center justify-center mb-5  gap-4">
+            <div className="flex gap-4 items-center ">
+              <Link
+                to={`/edit/`}
+                className={`cursor-pointer z-10 hover:text-blue-500 hover:scale-110 transition-transform`}
+              >
+                <PencilIcon className="w-8 h-8 " />
+              </Link>
+            </div>
+
+            <button className="cursor-pointer z-10 ">
+              <TrashIcon className="w-8 h-8 text-back-500 hover:text-red-600 hover:scale-110 transition-transform" />
+            </button>
           </div>
         </div>
       ))}
