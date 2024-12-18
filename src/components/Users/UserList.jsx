@@ -23,7 +23,8 @@ function UserList({
     const flatsCounter = async () => {
       try {
         const response = await axios.get("http://localhost:8080/flats");
-        setFlatsCount(response.data.map((flat) => flat.ownerId !== null));
+        console.log(response.data);
+        setFlatsCount(response.data);
       } catch (error) {
         console.log(error);
       }
@@ -62,7 +63,10 @@ function UserList({
                 <HomeIcon className="w-6 h-6" />
 
                 <span>
-                  {flatsCount.filter((flat) => flat._id === user.id).length}
+                  {
+                    flatsCount.filter((flat) => flat.ownerId._id === user.id)
+                      .length
+                  }
                 </span>
               </li>
               <li className="flex flex-col justify-center items-center mt-4">
