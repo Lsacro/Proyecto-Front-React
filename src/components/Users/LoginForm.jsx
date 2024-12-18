@@ -47,106 +47,108 @@ function LoginForm({
   };
 
   return (
-
-    
- 
-      <div className="w-full min-h-screen bg-black">
-       {/* <iframe className="absolute w-full min-h-screen" src="https://www.youtube.com/embed/mcGCnWG-7nc?autoplay=1&loop=1&playlist=mcGCnWG-7nc&mute=1&controls=0" allow="autoplay; loop; muted;" referrerPolicy="strict-origin-when-cross-origin" allowfullscreen/> */}
+    <div className="w-full min-h-screen bg-black">
+      {/* <iframe className="absolute w-full min-h-screen" src="https://www.youtube.com/embed/mcGCnWG-7nc?autoplay=1&loop=1&playlist=mcGCnWG-7nc&mute=1&controls=0" allow="autoplay; loop; muted;" referrerPolicy="strict-origin-when-cross-origin" allowfullscreen/> */}
       <video className="w-full absolute min-h-screen" autoPlay muted>
-        <source src="https://tracking-images.s3.us-east-2.amazonaws.com/flats.mp4" type="video/mp4"/>
+        <source
+          src="https://tracking-images.s3.us-east-2.amazonaws.com/flats.mp4"
+          type="video/mp4"
+        />
         Your browser does not support the video tag.
       </video>
-    <section className="flex fixed min-h-screen w-full justify-center font-sans dark:bg-gray-900 antialiased">
-      <div className="container rounded my-auto max-w-md border-2 border-gray-200 p-3 dark:border-gray-700 bg-white dark:bg-gray-900 antialiased">
-        <div className="my-6 text-center">
-          <HeaderForm
-            title={isResetMode ? "Reset Password" : "Login"}
-            paragraph={
-              isResetMode
-                ? "Enter your email to reset your password"
-                : "Login to access your account"
-            }
-          />
-        </div>
-        <div className="m-6">
-          <Formik
-            initialValues={initialValues}
-            validationSchema={
-              isResetMode ? resetValidationSchema : validationSchema
-            }
-            onSubmit={handleSubmit}
-          >
-            {({ isSubmitting }) => (
-              <Form className="mb-4">
-                {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-                <FormField
-                  type="email"
-                  name="email"
-                  id="email"
-                  placeholder="Your email address"
-                  label="Email Address"
-                />
-
-                {!isResetMode && (
+      <section className="flex fixed min-h-screen w-full justify-center font-sans dark:bg-gray-900 antialiased">
+        <div className="container rounded my-auto max-w-md border-2 border-gray-200 p-3 dark:border-gray-700 bg-white dark:bg-gray-900 antialiased">
+          <div className="my-6 text-center">
+            <HeaderForm
+              title={isResetMode ? "Reset Password" : "Login"}
+              paragraph={
+                isResetMode
+                  ? "Enter your email to reset your password"
+                  : "Login to access your account"
+              }
+            />
+          </div>
+          <div className="m-6">
+            <Formik
+              initialValues={initialValues}
+              validationSchema={
+                isResetMode ? resetValidationSchema : validationSchema
+              }
+              onSubmit={handleSubmit}
+            >
+              {({ isSubmitting }) => (
+                <Form className="mb-4">
+                  {errorMessage && (
+                    <p style={{ color: "red" }}>{errorMessage}</p>
+                  )}
                   <FormField
-                    type="password"
-                    name="password"
-                    id="password"
-                    placeholder="Your password"
-                    label="Password"
+                    type="email"
+                    name="email"
+                    id="email"
+                    placeholder="Your email address"
+                    label="Email Address"
                   />
-                )}
-                <ButtonPrimaryForm
-                  text={isResetMode ? "Reset Password" : "Login"}
-                  type="submit"
-                  disabled={isSubmitting}
-                />
 
-                {!isResetMode && (
-                  <p
-                    className="m-4 text-center font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
-                    onClick={() => setIsResetMode(true)}
-                  >
-                    Forgot Password?
-                  </p>
-                )}
-
-                {isResetMode && (
-                  <a
-                    className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-                    href="/"
-                    onClick={() => setIsResetMode(false)}
-                  >
-                    Back to Login
-                  </a>
-                )}
-
-                {!isResetMode && (
-                  <FooterForm
-                    message="Don't have an account yet?"
-                    linkText="Register"
-                    to="register"
+                  {!isResetMode && (
+                    <FormField
+                      type="password"
+                      name="password"
+                      id="password"
+                      placeholder="Your password"
+                      label="Password"
+                    />
+                  )}
+                  <ButtonPrimaryForm
+                    text={isResetMode ? "Reset Password" : "Login"}
+                    type="submit"
+                    disabled={isSubmitting}
                   />
-                )}
-              </Form>
+
+                  {!isResetMode && (
+                    <p
+                      className="m-4 text-center font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
+                      onClick={() => setIsResetMode(true)}
+                    >
+                      Forgot Password?
+                    </p>
+                  )}
+
+                  {isResetMode && (
+                    <a
+                      className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+                      href="/"
+                      onClick={() => setIsResetMode(false)}
+                    >
+                      Back to Login
+                    </a>
+                  )}
+
+                  {!isResetMode && (
+                    <FooterForm
+                      message="Don't have an account yet?"
+                      linkText="Register"
+                      to="register"
+                    />
+                  )}
+                </Form>
+              )}
+            </Formik>
+
+            {!isResetMode && (
+              <div className="mb-6">
+                <button
+                  onClick={onLoginWithGoogle}
+                  type="button"
+                  className="transition-colors duration-300 ease-in-out w-full rounded bg-white pt-2 pb-3 text-indigo-500 border border-indigo-300 hover:bg-indigo-400 hover:text-white focus:outline-none"
+                >
+                  Login with Google
+                </button>
+              </div>
             )}
-          </Formik>
-
-          {!isResetMode && (
-            <div className="mb-6">
-              <button
-                onClick={onLoginWithGoogle}
-                type="button"
-                className="transition-colors duration-300 ease-in-out w-full rounded bg-white pt-2 pb-3 text-indigo-500 border border-indigo-300 hover:bg-indigo-400 hover:text-white focus:outline-none"
-              >
-                Login with Google
-              </button>
-            </div>
-          )}
+          </div>
         </div>
-      </div>
-    </section>
-    </div> 
+      </section>
+    </div>
   );
 }
 
