@@ -135,10 +135,12 @@ function AllUsersPage() {
   };
 
   // Manejar eliminación de usuario
-  const handleDeleteUser = async (id, uid) => {
+  const handleDeleteUser = async (id, firstName) => {
     try {
-      await axios.delete(`http://localhost:8080/users/${id}`);
-      setUsers((prevState) => prevState.filter((user) => user.id !== id));
+      await axios.delete(`http://localhost:8080/user/${id}`);
+      alert(`User ${firstName}  deleted successfully`);
+      const response = await axios.get("http://localhost:8080/user");
+      setUsers(response.data); //setUsers((prevState) => prevState.filter((user) => user.id !== id));
     } catch (error) {
       console.error("Error deleting user:", error);
     }

@@ -16,6 +16,7 @@ import { ResetPasswordForm } from "./pages/ResetPasswordForm";
 import { PrivateRoute } from "./components/Commons/PrivateRoute";
 import { PublicRoute } from "./components/Commons/PublicRoute";
 import { AdminRoute } from "./components/Commons/AdminRoute";
+import { AdminEditUser } from "./pages/AdminEditUser";
 
 const AppRoutes = () => {
   return (
@@ -31,11 +32,11 @@ const AppRoutes = () => {
         <Route path="/my-flats" element={<MyFlatsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/profile/:id" element={<ProfilePage />} />
-
-        {/* Ruta admin */}
-        <Route element={<AdminRoute />}>
-          <Route path="/all-users" element={<AllUsersPage />} />
-        </Route>
+      </Route>
+      {/* Ruta admin */}
+      <Route element={<AdminRoute />}>
+        <Route path="/all-users" element={<AllUsersPage />} />
+        <Route path="/admin-edit/:id" element={<AdminEditUser />} />
       </Route>
 
       {/* Rutas públicas */}
